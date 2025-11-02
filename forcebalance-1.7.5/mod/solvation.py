@@ -47,13 +47,7 @@ class Solvation(Target):
         self.read_reference_data()
         ## logger info 
         logger.info("Solvation free energies from BAR simulation\n")
-        ## Extra files to be linked into the temp-directory.
-        self.solvfiles = [self.liquid_xyz, self.gas_xyz, self.settings_yaml]
-        ## Check the existence of files
-        for f in self.solvfiles:
-            if not os.path.exists(os.path.join(self.root, self.tgtdir, f)):
-                logger.error("%s doesn't exist; please provide this option\n" % f)
-                raise RuntimeError
+
 
     def post_init(self, options):
         # Prepare the temporary directory.
@@ -63,7 +57,7 @@ class Solvation(Target):
         """ Read the reference solvation data from a file. """
         # Read the SFE data file for experimental value and weight 
         for line in open(self.datafile).readlines():
-          if '#' not in line:
+          if '#' not in line and line.strip():
             s = line.split()
             self.expsfe = float(s[-1])
 
@@ -215,6 +209,8 @@ class Solvation(Target):
     def get(self, mvals, AGrad=True, AHess=False):
          
         """ Evaluate objective function. """
+        printcool("Target: %s - running autoBAR program" % (self.name), color=0)
+
         Answer = {'X':0.0, 'G':np.zeros(self.FF.np), 'H':np.zeros((self.FF.np, self.FF.np))}
         D, dD = self.get_sp(mvals, AGrad, AHess)
         
