@@ -66,6 +66,7 @@ conda activate $conda_env
 export TINKERPATH=$tinker_link_path
 export tk9home=$tinker9_bin
 export JOBPOOL=$(cd ../JobPool && pwd)
+export AUTOBARPATH=$(readlink -f ../autoBAR/autoBAR.py)
 " > $fb_bashrc
 
 echo -e 'export PATH=$TINKERPATH:$PATH
