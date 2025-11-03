@@ -90,7 +90,7 @@ class Solvation(Target):
           ref_gas_dir = os.path.join(self.root,refdir, 'gas')
           if os.path.isdir(ref_gas_dir):
             current_gas_dir = os.path.join(self.root,self.rundir, 'gas')
-            os.mkdir(f'mkdir -p {current_gas_dir}')
+            os.system(f'mkdir -p {current_gas_dir}')
             files = os.listdir(ref_gas_dir)
             for f in files:
               if (('.log' in f) or ('.arc' in f) or ('.bar' in f) or ('.ene' in f) or ('.key' in f)) and (('e000-' in f) or ('-v100') in f):
@@ -114,8 +114,10 @@ class Solvation(Target):
         # when run autoBAR, first step is to run minimize, which requires a prm file
 
         cmdstr = "python %s auto" %self.autobarpath
-        os.system(cmdstr)
-       
+        rtn = os.system(cmdstr)
+        if rtn != 0:
+          raise RuntimeError("autoBAR execution failed with return code %d." % rtn)
+
         sfe0 = 0.0
         sfe1 = np.zeros(self.FF.np)
         feps = []
